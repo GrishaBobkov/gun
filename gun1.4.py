@@ -233,9 +233,10 @@ def new_game(event=''):
 	global gun, screen1, balls, bullet, targets, guns
 	bullet = 0
 	balls = []
-	g2 = gun(20, 480)
-	g3 = gun(20, 30)
-	guns=[g3, g2]
+	guns=[]
+	for g in range(2):
+		new_g=gun(20, g*400+50)
+		guns.append(new_g)
 	targets=[]
 	for t in range(2000):
 		new_t=target()
