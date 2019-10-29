@@ -15,7 +15,6 @@ canv.pack(fill=tk.BOTH, expand=1)
 class ball():
 	def __init__(self, x, y):
 		""" Конструктор класса ball
-
 		Args:
 		x - начальное положение мяча по горизонтали
 		y - начальное положение мяча по вертикали
@@ -64,7 +63,6 @@ class ball():
         
 	def hittest(self, obj):
 		"""Функция проверяет сталкивалкивается ли данный обьект с целью, описываемой в обьекте obj.
-
 		Args:
 			obj: Обьект, с которым проверяется столкновение.
 		Returns:
@@ -90,7 +88,6 @@ class gun():
 
 	def fire2_end(self, event):
 		"""Выстрел мячом.
-
 		Происходит при отпускании кнопки мыши.
 		Начальные значения компонент скорости мяча vx и vy зависят от положения мыши.
 		"""
@@ -149,12 +146,32 @@ class target():
 		self.vy=rnd(-10, 10)
 	
 	def move(self):
-		self.x=self.x+self.vx
-		self.y=self.y+self.vy
-		if (self.x+self.vx>750 or self.x+self.vx<450):
+		global balls
+		dist=0
+		dopvx=0
+		dopvy=0
+		force=0
+		for b in balls:
+			dist=math.sqrt((b.x-self.x)*(b.x-self.x)+(b.y-self.y)*(b.y-self.y))
+			force+=int(10000000/(dist*dist*dist))
+			dopvx+=force*(self.x-b.x)/dist
+			dopvy+=force*(self.y-b.y)/dist
+		self.x=self.x+self.vx+dopvx
+		self.y=self.y+self.vy+dopvy
+		if (self.x+self.vx+dopvx>800 and self.vx+dopvx>0) or (self.x+self.vx+dopvx<500 and self.vx+dopvx<0):
 			self.vx=-self.vx
-		if (self.y+self.vy>500 or self.y+self.vy<50):
+			dopvx=-dopvx
+			if (self.x+self.vx+dopvx>800 and self.x<5000):
+				self.x=800
+			elif (self.x+self.vx+dopvx<500 and self.x<5000):
+				self.x=500
+		if ((self.y+self.vy+dopvy>550 and self.vy+dopvy>0) or (self.y+self.vy+dopvy<0 and self.vy+dopvy<0)):
 			self.vy=-self.vy
+			dopvy=-dopvy
+			if (self.y+self.vy+dopvy>550 and self.x<5000):
+				self.y=550
+			elif (self.y+self.vy+dopvy<0 and self.x<5000):
+				self.y=0
 		canv.coords(
 				self.id,
 				self.x - self.r,
