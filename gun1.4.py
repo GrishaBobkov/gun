@@ -130,6 +130,10 @@ class target():
 		self.live = 1
 		self.vx=rnd(-10, 10)
 		self.vy=rnd(-10, 10)
+		if self.vx==0:
+			self.vx=1
+		if self.vy==0:
+			self.vy=1
 		self.id = canv.create_oval(0,0,0,0)
 		self.id_points = canv.create_text(30,30,text = self.points,font = '28')
 
@@ -159,20 +163,20 @@ class target():
 				dopvy+=force*(self.y-b.y)/dist
 			self.x=self.x+self.vx+dopvx
 			self.y=self.y+self.vy+dopvy
-			if (self.x+self.vx+dopvx>800 and self.vx+dopvx>0) or (self.x+self.vx+dopvx<500 and self.vx+dopvx<0):
+			if (self.x+self.vx+dopvx>800 and self.vx+dopvx>=0) or (self.x+self.vx+dopvx<500 and self.vx+dopvx<0):
 				self.vx=-self.vx
 				dopvx=-dopvx
-				if (self.x+self.vx+dopvx>800):
-					self.x=800
-				elif (self.x+self.vx+dopvx<500):
-					self.x=500
+			if (self.x+self.vx+dopvx>800):
+				self.x=800
+			elif (self.x+self.vx+dopvx<500):
+				self.x=500
 			if ((self.y+self.vy+dopvy>550 and self.vy+dopvy>0) or (self.y+self.vy+dopvy<0 and self.vy+dopvy<0)):
 				self.vy=-self.vy
 				dopvy=-dopvy
-				if (self.y+self.vy+dopvy>550):
-					self.y=550
-				elif (self.y+self.vy+dopvy<0):
-					self.y=0
+			if (self.y+self.vy+dopvy>550):
+				self.y=550
+			elif (self.y+self.vy+dopvy<0):
+				self.y=0
 			canv.coords(
 					self.id,
 					self.x - self.r,
@@ -182,11 +186,25 @@ class target():
 
 	def hit(self, points=1):
 		"""Попадание шарика в цель."""
-		canv.coords(self.id, -10, -10, -10, -10)
-		self.Life=0
 		if self.Life==1:
 			self.points += points
+
+		self.Life=0
+		death_animation(self,10)()
 		canv.itemconfig(self.id_points, text=self.points)
+def death_animation(self, r):
+	def temp():	
+		canv.coords(self.id, self.x-r, self.y-r, self.x+r, self.y+r)
+		if (r<70):
+			canv.itemconfig(self.id, fill='black')
+			root.after(100, death_animation(self,r+10))
+		elif (r<1000):
+			canv.itemconfig(self.id, fill=choice(['blue', 'green', 'red', 'brown']))
+			root.after(100, death_animation(self,r+20+r/1))
+		else:
+			canv.coords(self.id,0,0,0,0)
+			
+	return temp
 
 def target_all_live():
 	global targets
