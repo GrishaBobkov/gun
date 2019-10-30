@@ -117,7 +117,7 @@ class gun():
 
 	def power_up(self):
 		if self.f2_on:
-			if self.f2_power < 100:
+			if self.f2_power < 30:
 				self.f2_power += 1
 			canv.itemconfig(self.id, fill='orange')
 		else:
@@ -264,7 +264,7 @@ def new_game(event=''):
 				canv.bind('<ButtonRelease-1>', '')
 				canv.itemconfig(screen1, text='Вы уничтожили цели за ' + str(bullet) + ' выстрелов')
 		canv.update()
-		time.sleep(0.03)
+		time.sleep(0.001)
 		for g in guns:
 			g.targetting()
 			g.power_up()
